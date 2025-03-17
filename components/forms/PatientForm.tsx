@@ -7,6 +7,12 @@ import { Button } from "@/components/ui/button"
 import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import CoustomFormField from "../CoustomFormField"
+import { useState } from "react"
+import SubmitButton from "../ui/SubmitButton"
+import { UserFormValidation } from "@/lib/validation"
+import { useRouter } from "next/navigation"
+
+// import { ValidationMode } from "react-hook-form"
  export enum FormFieldType{
     INPUT= 'input',
     TEXTAREA = 'textarea',
@@ -16,25 +22,35 @@ import CoustomFormField from "../CoustomFormField"
     SELECT = 'Select',
     SKELETON = 'skeleton'
  }
-const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
-})
+
  
 const PatientForm = () => {
+  const  router = useRouter();
+
   // 1. Define your form.
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const [isLoading, setisLoading] = useState(false);
+  const form = useForm<z.infer<typeof UserFormValidation>>({
+    resolver: zodResolver(UserFormValidation),
     defaultValues: {
-      username: "",
+      name : "",
+      email: "",
+      phone: "",
     },
   })
  
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
+  function onSubmit(values: z.infer<typeof UserFormValidation>) {
+    setisLoading(true);
+
+    try {
+      // const userData = {name , email, phnoe};
+      // const user = await createUser(userData);
+      // if (user) router.push(`/patient/${user.$id}/register`)
+
+
+    } catch (error) {
+      console.log(error);
+    }
     console.log(values)
   }
   return (
@@ -51,11 +67,32 @@ const PatientForm = () => {
               control={form.control}
               name="name"
               label="Full name"
-              placeholder="John Doe"
+              placeholder="Rajdeep pal"
               iconsrc="/assets/icons/user.svg"
               iconAlt="user"
             />
-      <FormField
+
+<CoustomFormField 
+              fieldType={FormFieldType.INPUT}
+              control={form.control}
+              name="emai;"
+              label="Email"
+              placeholder="abc@gmail.com"
+              iconsrc="/assets/icons/email.svg"
+              iconAlt="user"
+            />
+
+<CoustomFormField 
+              fieldType={FormFieldType.PHONE_INPUT}
+              control={form.control}
+              name="phone"
+              label="phone number"
+              placeholder="(555) 123-456"
+              // iconsrc="/assets/icons/user.svg"
+              // iconAlt="user"
+            />
+
+      {/* <FormField
         control={form.control}
         name="username"
         render={({ field }) => (
@@ -70,8 +107,8 @@ const PatientForm = () => {
             <FormMessage />
           </FormItem>
         )}
-      />
-      <Button type="submit">Submit</Button>
+      /> */}
+      <SubmitButton isLoading = {isLoading}>Get started</SubmitButton>
     </form>
   </Form>
   )
